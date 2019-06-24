@@ -1,14 +1,25 @@
-import React, {Component} from 'react';
-import {StyleSheet, Alert, View} from 'react-native';
+import React, { Component } from 'react';
+import { StyleSheet, Alert } from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
 
-export default class App extends Component {
+export default class Chat extends Component {
 
-	componentWillMount(){
+    componentWillMount(){
 		this.setState({
 			ws: new WebSocket('wss://echo.websocket.org')
 		})
 	}
+
+	static navigationOptions = {
+		title: 'Papagaio App',
+		headerStyle: {
+			backgroundColor: '#FF890C'
+		},
+		headerTintColor: '#fff',
+			headerTitleStyle: {
+			fontWeight: 'bold',
+		},
+	};
 
 	state = {
 		ws: null,
@@ -50,33 +61,26 @@ export default class App extends Component {
 		Alert.alert(user.name);
 	}
 
-	render() {
-		return (
-			<View style={styles.container}>
-				<GiftedChat
-					messages={this.state.messages}
-					onSend={(messages) => this.onSend(messages)}
-					user={{
-						_id: 1,
-						createdAt: new Date(),
-						text: this.state.message
-					}}
-					placeholder="Mensagem..."
-					onPressAvatar={(user) => this.showAvatar(user)}
-					onInputTextChanged={(text) => this.setState({ message: text })}
-					style={styles.chat}
-					
-				/>
-			</View>
-		);
-	}
+    render() {
+        return (
+            <GiftedChat
+                messages={this.state.messages}
+                onSend={(messages) => this.onSend(messages)}
+                user={{
+                    _id: 1,
+                    createdAt: new Date(),
+                    text: this.state.message
+                }}
+                placeholder="Digite uma mensagem para o papagaio..."
+                onPressAvatar={(user) => this.showAvatar(user)}
+                onInputTextChanged={(text) => this.setState({ message: text })}
+                style={styles.chat}
+            />
+        )
+    }
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: '#F5FCFF',
-	},
 	chat: {
 		flex: 1
 	}
