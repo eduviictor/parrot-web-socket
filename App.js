@@ -1,49 +1,80 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
-
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
+import { GiftedChat } from 'react-native-gifted-chat';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+export default class App extends Component {
 
-type Props = {};
-export default class App extends Component<Props> {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to React Native!</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
-      </View>
-    );
-  }
+	componentWillMount(){
+		this.setState({
+			ws: new WebSocket('wss://echo.websocket.org')
+		})
+	}
+
+	state = {
+		ws: null,
+		messages: [],
+		message: ''
+	}
+
+	componentDidMount(){
+		this.state.ws.onopen = () => {
+			console.log('Conectado!');
+		}
+		this.state.ws.onmessage = ({ data }) => {
+			const parrot = {
+				_id: this.state.messages.length,
+				text: data,
+				createdAt: new Date(),
+				user: {
+					_id: 2,
+					name: 'Parrot',
+					avatar: 'https://image.freepik.com/vetores-gratis/psittacus-eximius-ilustrado_53876-34993.jpg',
+				}
+			}
+			console.log(data);
+			this.setState(previousState => ({
+				messages: GiftedChat.append(previousState.messages, parrot),
+			}));
+		};
+	}
+
+	onSend = (messages = []) => {
+		this.setState(previousState => ({
+			messages: GiftedChat.append(previousState.messages, messages),
+		}));	
+		this.state.ws.send(this.state.message);
+		console.log('enviei')
+	}
+
+	render() {
+		// console.log(this.state.message)
+		return (
+			<GiftedChat
+				messages={this.state.messages}
+				onSend={(messages) => this.onSend(messages)}
+				user={{
+					_id: 1,
+					createdAt: new Date(),
+					text: this.state.message
+				}}
+				onInputTextChanged={(text) => this.setState({ message: text })}
+				style={styles.container}
+				// text={this.state.messages}
+			/>
+		);
+	}
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+	container: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: '#F5FCFF',
+	},
+	chat: {
+		flex: 1,
+		width: 100,
+		height: 100
+	}
 });
