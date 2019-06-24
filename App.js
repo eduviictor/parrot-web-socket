@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Alert, View} from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
 
 export default class App extends Component {
@@ -13,7 +13,8 @@ export default class App extends Component {
 	state = {
 		ws: null,
 		messages: [],
-		message: ''
+		message: '',
+		showAvatar: false
 	}
 
 	componentDidMount(){
@@ -44,8 +45,12 @@ export default class App extends Component {
 		this.state.ws.send(this.state.message);
 	}
 
+	showAvatar = (user) => {
+		// this.setState({ showAvatar: true });
+		Alert.alert(user.name);
+	}
+
 	render() {
-		// console.log(this.state.message)
 		return (
 			<View style={styles.container}>
 				<GiftedChat
@@ -56,9 +61,11 @@ export default class App extends Component {
 						createdAt: new Date(),
 						text: this.state.message
 					}}
+					placeholder="Mensagem..."
+					onPressAvatar={(user) => this.showAvatar(user)}
 					onInputTextChanged={(text) => this.setState({ message: text })}
 					style={styles.chat}
-					// text={this.state.messages}
+					
 				/>
 			</View>
 		);
