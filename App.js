@@ -27,11 +27,10 @@ export default class App extends Component {
 				createdAt: new Date(),
 				user: {
 					_id: 2,
-					name: 'Parrot',
+					name: 'Papagaio',
 					avatar: 'https://image.freepik.com/vetores-gratis/psittacus-eximius-ilustrado_53876-34993.jpg',
 				}
 			}
-			console.log(data);
 			this.setState(previousState => ({
 				messages: GiftedChat.append(previousState.messages, parrot),
 			}));
@@ -43,24 +42,25 @@ export default class App extends Component {
 			messages: GiftedChat.append(previousState.messages, messages),
 		}));	
 		this.state.ws.send(this.state.message);
-		console.log('enviei')
 	}
 
 	render() {
 		// console.log(this.state.message)
 		return (
-			<GiftedChat
-				messages={this.state.messages}
-				onSend={(messages) => this.onSend(messages)}
-				user={{
-					_id: 1,
-					createdAt: new Date(),
-					text: this.state.message
-				}}
-				onInputTextChanged={(text) => this.setState({ message: text })}
-				style={styles.container}
-				// text={this.state.messages}
-			/>
+			<View style={styles.container}>
+				<GiftedChat
+					messages={this.state.messages}
+					onSend={(messages) => this.onSend(messages)}
+					user={{
+						_id: 1,
+						createdAt: new Date(),
+						text: this.state.message
+					}}
+					onInputTextChanged={(text) => this.setState({ message: text })}
+					style={styles.chat}
+					// text={this.state.messages}
+				/>
+			</View>
 		);
 	}
 }
@@ -68,13 +68,9 @@ export default class App extends Component {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
 		backgroundColor: '#F5FCFF',
 	},
 	chat: {
-		flex: 1,
-		width: 100,
-		height: 100
+		flex: 1
 	}
 });
